@@ -856,10 +856,47 @@ def _():
     return
 
 
+@app.cell(hide_code=True)
+def _():
+    step_size_slider = mo.ui.slider(
+        start=0.01, stop=1.0, step=0.01, value=0.1, label="Step size", show_value=True, debounce=True
+    )
+    epochs_slider = mo.ui.slider(
+        start=1, stop=50, step=1, value=5, label="Epochs", show_value=True, debounce=True
+    )
+    batch_size_slider = mo.ui.slider(
+        start=10, stop=1000, step=10, value=100, label="Batch size", show_value=True, debounce=True
+    )
+    return batch_size_slider, epochs_slider, step_size_slider
+
+
 @app.cell
-def _(X, X_test, y_data, y_test):
-    W = train_sgd(X, y_data, step_size=0.1, epochs=5, batch_size=100)
-    print(error(X_test @ W.T, y_test))
+def _(batch_size_slider, epochs_slider, step_size_slider):
+    [
+        step_size_slider,
+        epochs_slider,
+        batch_size_slider,
+    ]
+    return
+
+
+@app.cell
+def _(
+    X,
+    X_test,
+    batch_size_slider,
+    epochs_slider,
+    step_size_slider,
+    y_data,
+    y_test,
+):
+    W = train_sgd(
+        X, y_data,
+        step_size=step_size_slider.value,
+        epochs=epochs_slider.value,
+        batch_size=batch_size_slider.value,
+    )
+    mo.md(f"**Test error: {error(X_test @ W.T, y_test):.4f}**")
     return
 
 
